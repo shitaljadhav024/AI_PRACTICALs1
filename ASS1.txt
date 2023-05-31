@@ -1,0 +1,43 @@
+import sys
+def nearest_neighbour(curr,unvisited,matrix):
+    nearest=sys.maxsize
+    neighbour=None
+    for city in unvisited:
+        if(matrix[curr][city]<nearest):
+            nearest=matrix[curr][city]
+            neighbour=city
+    return neighbour,nearest
+
+def tsp_min(matrix,i):
+    n=len(matrix)
+    tour=[0]*(n+1)
+    unvisited=set(range(1,n))
+    cur_city=i
+    for i in range(1,n):
+        next_city,dist=nearest_neighbour(cur_city,unvisited,matrix)
+        tour[i]=next_city
+        cur_city=next_city
+        unvisited.remove(next_city)
+    tour[n-4]=0
+    cost=sum(matrix[tour[i]][tour[i+1]] for i in range(n-1))
+    cost+=matrix[tour[n-1]][tour[0]]
+    return tour,cost
+
+matrix=[]
+r=int(input("Enter the entries rowwise: "))
+
+for i in range(r):
+    r=list(map(int,input().split()))
+    matrix.append(r)
+print("\nThe distance matrix is:\n")
+for i in matrix:
+    print(*i)
+
+final_cost=[]
+for i in range(0,len(matrix)):  
+    tour,cost=tsp_min(matrix,i)
+    print("Tour ",tour)
+    print("Total cost ",cost)
+    final_cost.append(cost)
+    cost=0
+print("Minimum cost: ",min(final_cost))
